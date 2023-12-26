@@ -21,13 +21,3 @@ interface DataModule {
         todoRepository: DefaultTodoRepository
     ): TodoRepository
 }
-
-class FakeTodoRepository @Inject constructor() : TodoRepository {
-    override val todos: Flow<List<String>> = flowOf(fakeTodos)
-
-    override suspend fun add(name: String) {
-        throw NotImplementedError()
-    }
-}
-
-val fakeTodos = listOf("One", "Two", "Three")

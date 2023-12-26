@@ -1,41 +1,38 @@
 package com.jeldridge.todoapp.data
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
+import com.jeldridge.todoapp.data.local.fake.FakeTodoDao
+import com.jeldridge.todoapp.data.model.Todo
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import com.jeldridge.todoapp.data.local.database.Todo
-import com.jeldridge.todoapp.data.local.database.TodoDao
 
 /**
  * Unit tests for [DefaultTodoRepository].
  */
-@OptIn(ExperimentalCoroutinesApi::class) // TODO: Remove when stable
 class DefaultTodoRepositoryTest {
 
     @Test
     fun todos_newItemSaved_itemIsReturned() = runTest {
         val repository = DefaultTodoRepository(FakeTodoDao())
 
-        repository.add("Repository")
+        val expectedTodoName = "Repository"
+        repository.add(expectedTodoName)
 
-        assertEquals(repository.todos.first().size, 1)
+        val todos = repository.todos.first()
+        assertEquals(todos.size, 1)
+        assertEquals(Todo(name = expectedTodoName), todos.first())
     }
 
-}
+    @Test
+    fun todos_deleteTodo_isRemoved() = runTest {
+        val repository = DefaultTodoRepository(FakeTodoDao())
 
-private class FakeTodoDao : TodoDao {
+        val expectedTodoName = "Repository"
+        repository.add(expectedTodoName)
 
-    private val data = mutableListOf<Todo>()
-
-    override fun getTodos(): Flow<List<Todo>> = flow {
-        emit(data)
+        repository.delete(Todo(name = expectedTodoName))
+        assertEquals(0, repository.todos.first().size)
     }
 
-    override suspend fun insertTodo(item: Todo) {
-        data.add(0, item)
-    }
 }

@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.jeldridge.todoapp.data.model.Todo
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,14 +23,14 @@ class TodoScreenTest {
     @Before
     fun setup() {
         composeTestRule.setContent {
-            TodoScreen(FAKE_DATA, onSave = {})
+            TodoScreen(FAKE_DATA, onSave = {}, onDelete = {})
         }
     }
 
     @Test
     fun firstItem_exists() {
-        composeTestRule.onNodeWithText(FAKE_DATA.first()).assertExists().performClick()
+        composeTestRule.onNodeWithText(FAKE_DATA.first().name).assertExists()
     }
 }
 
-private val FAKE_DATA = listOf("Compose", "Room", "Kotlin")
+private val FAKE_DATA = listOf(Todo(id = 0, name = "Compose"), Todo(id = 1, name = "Room"), Todo(id = 2, name = "Kotlin"))

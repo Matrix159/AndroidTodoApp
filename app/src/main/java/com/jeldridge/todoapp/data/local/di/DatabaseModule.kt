@@ -8,7 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import com.jeldridge.todoapp.data.local.database.AppDatabase
-import com.jeldridge.todoapp.data.local.database.TodoDao
+import com.jeldridge.todoapp.data.local.database.dao.TodoDao
 import javax.inject.Singleton
 
 
@@ -26,7 +26,7 @@ class DatabaseModule {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
-            "Todo"
+            "TodoDatabase"
         ).build()
     }
 }

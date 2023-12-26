@@ -7,7 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import com.jeldridge.todoapp.data.TodoRepository
 import com.jeldridge.todoapp.data.di.DataModule
-import com.jeldridge.todoapp.data.di.FakeTodoRepository
+import com.jeldridge.todoapp.data.fake.FakeTodoRepository
 
 @Module
 @TestInstallIn(

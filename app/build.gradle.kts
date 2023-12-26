@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -13,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.jeldridge.todoapp"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -47,10 +46,6 @@ android {
 
     buildFeatures {
         compose = true
-        aidl = false
-        buildConfig = false
-        renderScript = false
-        shaders = false
     }
 
     composeOptions {

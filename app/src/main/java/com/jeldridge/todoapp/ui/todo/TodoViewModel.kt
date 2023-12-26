@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.jeldridge.todoapp.data.TodoRepository
+import com.jeldridge.todoapp.data.model.Todo
 import com.jeldridge.todoapp.ui.todo.TodoUiState.Error
 import com.jeldridge.todoapp.ui.todo.TodoUiState.Loading
 import com.jeldridge.todoapp.ui.todo.TodoUiState.Success
@@ -21,19 +22,29 @@ class TodoViewModel @Inject constructor(
 ) : ViewModel() {
 
     val uiState: StateFlow<TodoUiState> = todoRepository
-        .todos.map<List<String>, TodoUiState>(::Success)
+        .todos.map<List<Todo>, TodoUiState>(::Success)
         .catch { emit(Error(it)) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            Loading
+        )
 
     fun addTodo(name: String) {
         viewModelScope.launch {
             todoRepository.add(name)
         }
     }
+
+    fun deleteTodo(todo: Todo) {
+        viewModelScope.launch {
+            todoRepository.delete(todo)
+        }
+    }
 }
 
 sealed interface TodoUiState {
-    object Loading : TodoUiState
+    data object Loading : TodoUiState
     data class Error(val throwable: Throwable) : TodoUiState
-    data class Success(val data: List<String>) : TodoUiState
+    data class Success(val data: List<Todo>) : TodoUiState
 }
