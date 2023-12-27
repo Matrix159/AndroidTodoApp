@@ -1,3 +1,5 @@
+
+![Todo App Image](https://github.com/Matrix159/AndroidTodoApp/blob/main/app/src/main/res/mipmap-xxhdpi/todo_launcher_icon.webp) 
 # TODO App
 An Android application to keep track of things you need to do.
 
