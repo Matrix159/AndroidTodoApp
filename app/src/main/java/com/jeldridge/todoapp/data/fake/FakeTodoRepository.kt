@@ -21,7 +21,8 @@ class FakeTodoRepository : TodoRepository {
     } else data.asSharedFlow()
 
   override suspend fun add(name: String) {
-    data.emit(currentData + Todo(name = name))
+    val newId = (currentData.lastOrNull()?.id ?: 0) + 1
+    data.emit(currentData + Todo(id = newId, name = name))
   }
 
   override suspend fun delete(todo: Todo) {

@@ -2,6 +2,7 @@ package com.jeldridge.todoapp.ui.todo
 
 
 import com.jeldridge.todoapp.data.fake.FakeTodoRepository
+import com.jeldridge.todoapp.data.model.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -18,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
+import kotlin.math.exp
 import kotlin.test.assertIs
 
 // Reusable JUnit4 TestRule to override the Main dispatcher
@@ -77,6 +79,45 @@ class TodoViewModelTest {
 
     val state = viewModel.uiState.value
     assertIs<TodoUiState.Error>(state)
+
+    collectJob.cancel()
+  }
+
+  @Test
+  fun `addTodo adds todo to UI state`() = runTest {
+    val firstTodo = "Test todo"
+    todoRepository.add(firstTodo)
+    val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+
+
+    val expectedTodo = "new todo"
+    viewModel.addTodo("new todo")
+
+    assertEquals(
+      TodoUiState.Success(
+        data = listOf(
+          Todo(id = 1, name = firstTodo),
+          Todo(id = 2, name = expectedTodo)
+        )
+      ), viewModel.uiState.value
+    )
+    collectJob.cancel()
+  }
+
+  @Test
+  fun `deleteTodo removes existing todo from UI state`() = runTest {
+    val firstTodo = "Test todo"
+    todoRepository.add(firstTodo)
+    val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+
+    val stateBeforeDelete = viewModel.uiState.value
+    assertIs<TodoUiState.Success>(stateBeforeDelete)
+
+    viewModel.deleteTodo(stateBeforeDelete.data.first())
+
+    val stateAfterDelete = viewModel.uiState.value
+    assertIs<TodoUiState.Success>(stateAfterDelete)
+    assertEquals(0, stateAfterDelete.data.size)
 
     collectJob.cancel()
   }

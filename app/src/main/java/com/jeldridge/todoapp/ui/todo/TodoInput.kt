@@ -31,6 +31,9 @@ fun TodoInput(
     OutlinedTextField(
       value = todoName,
       onValueChange = { todoName = it },
+      label = {
+        Text(stringResource(R.string.new_todo_name))
+      },
       modifier = Modifier.weight(1f)
     )
 
@@ -43,7 +46,7 @@ fun TodoInput(
     ) {
       Text(
         softWrap = false,
-        text = stringResource(R.string.add)
+        text = stringResource(R.string.add_todo)
       )
     }
   }

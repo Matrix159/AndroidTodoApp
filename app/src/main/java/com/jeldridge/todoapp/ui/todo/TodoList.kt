@@ -45,7 +45,7 @@ fun TodoList(
           IconButton(onClick = { onDelete(todo) }) {
             Icon(
               Icons.Default.Delete,
-              stringResource(R.string.delete_todo),
+              stringResource(R.string.delete_todo, todo.name),
               tint = Color.Red
             )
           }
