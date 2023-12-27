@@ -12,27 +12,27 @@ import org.junit.Test
  */
 class DefaultTodoRepositoryTest {
 
-    @Test
-    fun todos_newItemSaved_itemIsReturned() = runTest {
-        val repository = DefaultTodoRepository(FakeTodoDao())
+  @Test
+  fun todos_newItemSaved_itemIsReturned() = runTest {
+    val repository = DefaultTodoRepository(FakeTodoDao())
 
-        val expectedTodoName = "Repository"
-        repository.add(expectedTodoName)
+    val expectedTodoName = "Repository"
+    repository.add(expectedTodoName)
 
-        val todos = repository.todos.first()
-        assertEquals(todos.size, 1)
-        assertEquals(Todo(name = expectedTodoName), todos.first())
-    }
+    val todos = repository.todos.first()
+    assertEquals(todos.size, 1)
+    assertEquals(Todo(name = expectedTodoName), todos.first())
+  }
 
-    @Test
-    fun todos_deleteTodo_isRemoved() = runTest {
-        val repository = DefaultTodoRepository(FakeTodoDao())
+  @Test
+  fun todos_deleteTodo_isRemoved() = runTest {
+    val repository = DefaultTodoRepository(FakeTodoDao())
 
-        val expectedTodoName = "Repository"
-        repository.add(expectedTodoName)
+    val expectedTodoName = "Repository"
+    repository.add(expectedTodoName)
 
-        repository.delete(Todo(name = expectedTodoName))
-        assertEquals(0, repository.todos.first().size)
-    }
+    repository.delete(Todo(name = expectedTodoName))
+    assertEquals(0, repository.todos.first().size)
+  }
 
 }

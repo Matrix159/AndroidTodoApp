@@ -12,9 +12,9 @@ annotation class TodoAppPreview
 
 @Composable
 fun TodoAppPreview(content: @Composable () -> Unit = {}) {
-    TodoTheme {
-        Surface {
-            content()
-        }
+  TodoTheme {
+    Surface {
+      content()
     }
+  }
 }

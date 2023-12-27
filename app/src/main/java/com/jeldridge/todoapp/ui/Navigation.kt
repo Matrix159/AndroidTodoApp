@@ -9,13 +9,13 @@ import com.jeldridge.todoapp.ui.todo.TodoScreen
 
 @Composable
 fun TodoAppNav(modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
+  val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = "todoScreen",
-        modifier = modifier
-    ) {
-        composable("todoScreen") { TodoScreen() }
-    }
+  NavHost(
+    navController = navController,
+    startDestination = "todoScreen",
+    modifier = modifier
+  ) {
+    composable("todoScreen") { TodoScreen() }
+  }
 }

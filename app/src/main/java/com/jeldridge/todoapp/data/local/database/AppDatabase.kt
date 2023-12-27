@@ -7,5 +7,5 @@ import com.jeldridge.todoapp.data.local.database.entity.TodoEntity
 
 @Database(entities = [TodoEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun todoDao(): TodoDao
+  abstract fun todoDao(): TodoDao
 }
