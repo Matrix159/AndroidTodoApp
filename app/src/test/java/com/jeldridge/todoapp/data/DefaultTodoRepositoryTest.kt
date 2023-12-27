@@ -5,6 +5,7 @@ import com.jeldridge.todoapp.data.model.Todo
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 
 /**
@@ -12,27 +13,35 @@ import org.junit.Test
  */
 class DefaultTodoRepositoryTest {
 
-  @Test
-  fun todos_newItemSaved_itemIsReturned() = runTest {
-    val repository = DefaultTodoRepository(FakeTodoDao())
+  private lateinit var repository: TodoRepository
 
+  @Before
+  fun setup() {
+    repository = DefaultTodoRepository(FakeTodoDao())
+  }
+
+  @Test
+  fun `todos are empty by default`() = runTest {
+    val todos = repository.todos.first()
+    assertEquals(0, todos.size)
+  }
+
+  @Test
+  fun `saves a todo when adding by name`() = runTest {
     val expectedTodoName = "Repository"
     repository.add(expectedTodoName)
 
     val todos = repository.todos.first()
-    assertEquals(todos.size, 1)
+    assertEquals(1, todos.size)
     assertEquals(Todo(name = expectedTodoName), todos.first())
   }
 
   @Test
-  fun todos_deleteTodo_isRemoved() = runTest {
-    val repository = DefaultTodoRepository(FakeTodoDao())
-
+  fun `deleting a todo removes it from todos`() = runTest {
     val expectedTodoName = "Repository"
     repository.add(expectedTodoName)
 
     repository.delete(Todo(name = expectedTodoName))
     assertEquals(0, repository.todos.first().size)
   }
-
 }

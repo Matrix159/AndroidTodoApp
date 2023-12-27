@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +24,7 @@ class TodoViewModel @Inject constructor(
 
   val uiState: StateFlow<TodoUiState> = todoRepository
     .todos.map<List<Todo>, TodoUiState>(::Success)
+    .onStart { emit(Loading) }
     .catch { emit(Error(it)) }
     .stateIn(
       viewModelScope,

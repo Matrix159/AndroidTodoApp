@@ -102,6 +102,7 @@ dependencies {
   // Local tests: jUnit, coroutines, Android runner
   testImplementation(libs.junit)
   testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(kotlin("test"))
 
   // Instrumented tests: jUnit rules and runners
 

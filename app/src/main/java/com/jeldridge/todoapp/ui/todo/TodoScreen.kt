@@ -1,35 +1,19 @@
 package com.jeldridge.todoapp.ui.todo
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jeldridge.todoapp.R
 import com.jeldridge.todoapp.data.model.Todo
 import com.jeldridge.todoapp.ui.TodoAppPreview
 
@@ -55,31 +39,24 @@ internal fun TodoScreen(
   onDelete: (todo: Todo) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  Column(modifier.padding(16.dp)) {
-    LazyColumn(
-      modifier = Modifier.weight(1f)
-    ) {
-      items(todos, key = { it.id }) { todo ->
-        Column(modifier = Modifier.padding(4.dp)) {
-          Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-              .fillMaxWidth()
-          ) {
-            Text(todo.name, modifier = Modifier.weight(1f))
-            IconButton(onClick = { onDelete(todo) }) {
-              Icon(
-                Icons.Default.Delete,
-                "Delete todo",
-                tint = Color.Red
-              )
-            }
-          }
-          Divider()
-        }
-      }
+  Column(modifier = modifier.padding(16.dp)) {
+    var todoToDelete by remember { mutableStateOf<Todo?>(null) }
+    todoToDelete?.let {
+      DeleteTodoDialog(
+        todo = it,
+        onDelete = {
+          onDelete(it)
+          todoToDelete = null
+        },
+        onDismissRequest = {
+          todoToDelete = null
+        })
     }
+    TodoList(
+      todos = todos,
+      onDelete = { todo -> todoToDelete = todo },
+      modifier = Modifier.weight(1f)
+    )
     Spacer(Modifier.height(16.dp))
     TodoInput(onAdd = { name ->
       onSave(name)

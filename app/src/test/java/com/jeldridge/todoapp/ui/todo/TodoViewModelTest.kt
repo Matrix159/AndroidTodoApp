@@ -2,22 +2,83 @@ package com.jeldridge.todoapp.ui.todo
 
 
 import com.jeldridge.todoapp.data.fake.FakeTodoRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestWatcher
+import org.junit.runner.Description
+import kotlin.test.assertIs
 
+// Reusable JUnit4 TestRule to override the Main dispatcher
+@OptIn(ExperimentalCoroutinesApi::class)
+class MainDispatcherRule(
+  private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(),
+) : TestWatcher() {
+  override fun starting(description: Description) {
+    Dispatchers.setMain(testDispatcher)
+  }
+
+  override fun finished(description: Description) {
+    Dispatchers.resetMain()
+  }
+}
+
+
+@OptIn(ExperimentalCoroutinesApi::class)
 class TodoViewModelTest {
-  @Test
-  fun uiState_initiallyLoading() = runTest {
-    val viewModel = TodoViewModel(FakeTodoRepository())
-    assertEquals(viewModel.uiState.first(), TodoUiState.Loading)
+  @get:Rule
+  val mainDispatcherRule = MainDispatcherRule()
+
+  private lateinit var todoRepository: FakeTodoRepository
+  private lateinit var viewModel: TodoViewModel
+
+  @Before
+  fun setup() {
+    todoRepository = FakeTodoRepository()
+    viewModel = TodoViewModel(todoRepository)
   }
 
   @Test
-  fun uiState_onItemSaved_isDisplayed() = runTest {
-    val viewModel = TodoViewModel(FakeTodoRepository())
-    assertEquals(viewModel.uiState.first(), TodoUiState.Loading)
+  fun `UI state is initially Loading`() = runTest {
+    assertEquals(TodoUiState.Loading, viewModel.uiState.first())
+  }
+
+  @Test
+  fun `UI state is Success after loading data`() = runTest {
+    val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+    val expectedTodoName = "Test todo"
+    todoRepository.add(expectedTodoName)
+
+    val state = viewModel.uiState.value
+    assertIs<TodoUiState.Success>(state)
+    assertEquals(1, state.data.size)
+
+    collectJob.cancel()
+  }
+
+  @Test
+  fun `UI state is error after catching exception`() = runTest {
+    todoRepository = FakeTodoRepository()
+    todoRepository.todoFlowShouldError = true
+    viewModel = TodoViewModel(todoRepository)
+
+    val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+
+    val state = viewModel.uiState.value
+    assertIs<TodoUiState.Error>(state)
+
+    collectJob.cancel()
   }
 }
 
