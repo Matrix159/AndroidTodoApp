@@ -1,41 +1,20 @@
 package com.jeldridge.todoapp.ui.todo
 
 
+import com.jeldridge.todoapp.MainDispatcherRule
 import com.jeldridge.todoapp.data.fake.FakeTodoRepository
 import com.jeldridge.todoapp.data.model.Todo
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
-import kotlin.math.exp
 import kotlin.test.assertIs
-
-// Reusable JUnit4 TestRule to override the Main dispatcher
-@OptIn(ExperimentalCoroutinesApi::class)
-class MainDispatcherRule(
-  private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(),
-) : TestWatcher() {
-  override fun starting(description: Description) {
-    Dispatchers.setMain(testDispatcher)
-  }
-
-  override fun finished(description: Description) {
-    Dispatchers.resetMain()
-  }
-}
-
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodoViewModelTest {
